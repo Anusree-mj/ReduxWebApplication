@@ -8,12 +8,14 @@ const port = process.env.PORT || 5000;
 connectDb();
 
 import userRoutes from './routes/userRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/users', userRoutes)
+app.use('/admin', adminRoutes);
 
 app.get('/', (req, res) => res.send('Server is ready'))
 app.use(notFound);
