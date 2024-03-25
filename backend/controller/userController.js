@@ -1,24 +1,35 @@
 import asyncHandler from 'express-async-handler'
 import User from '../models/userModel.js';
-import {generateToken} from '../utilitis/token.js';
+import { generateToken } from '../utilitis/token.js';
 
 // auth user
 const authUser = asyncHandler(async (req, res) => {
+    console.log('entered in login backend')
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
-        generateToken(res, user._id);
+        const token = generateToken(user._id);
 
+        res.cookie('jwt', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development',
+            sameSite: 'strict',
+            maxAge: 30 * 24 * 60 * 60 * 1000
+        });
         res.json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
+            status: 'ok',
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                image: user.image
+            },
+            token: token
         });
     } else {
-        res.status(401);
-        throw new Error('Invalid email or password');
+        res.status(401).json({ status: 'nok', message: 'Invalid email or password' });
     }
 });
 
@@ -62,7 +73,7 @@ const logoutUser = (req, res) => {
 
 
 // get user
-const getUserProfile = asyncHandler(async (req, res) => {   
+const getUserProfile = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
 
     if (user) {
