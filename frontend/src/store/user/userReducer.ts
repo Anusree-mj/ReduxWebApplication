@@ -10,7 +10,7 @@ export interface userStateType {
 
 const initialState: userStateType = {
     user: {
-        id:'',
+        id: '',
         name: '',
         email: '',
         image: ''
@@ -37,7 +37,18 @@ export const userSlice: any = createSlice({
             state.isLoading = false;
             state.error = action.payload;
             console.log('eror found', state.error)
-        }
+        },
+        getSignupAction: (state) => {
+            state.isLoading = true;
+        },
+        getSignupSuccessAction: (state, action) => {
+            state.isLoading = false;
+            state.user = action.payload;
+        },
+        getSignupFailureAction: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+        },
 
     }
 })
@@ -45,5 +56,8 @@ export const userSlice: any = createSlice({
 export const {
     getLoginAction,
     getLoginSuccessAction,
-    getLoginFailureAction
+    getLoginFailureAction,
+    getSignupAction,
+    getSignupSuccessAction, getSignupFailureAction,
+
 } = userSlice.actions;

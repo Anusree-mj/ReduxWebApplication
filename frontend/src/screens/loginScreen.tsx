@@ -33,13 +33,13 @@ const LoginScreen = () => {
     }
 
     const handleLoginSuccess = (userData: any) => {
-        sessionStorage.setItem("userData", JSON.stringify(userData));
+        localStorage.setItem("userData", JSON.stringify(userData));
         toast.success('Successfully logged in');
         navigate('/');         
     }
 
     useEffect(() => {
-        const userData = sessionStorage.getItem("userData");
+        const userData = localStorage.getItem("userData");
         if (userData) {
             navigate('/');
         }
