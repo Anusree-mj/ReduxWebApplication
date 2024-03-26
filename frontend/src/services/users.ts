@@ -10,6 +10,18 @@ export const getLoginApi = (item: UserItem) => {
         },
         body: JSON.stringify(item)
     }).then((res) => {
-      return res.json();
+        return res.json();
+    });
+};
+export const getSignupApi = (item: UserItem) => {
+    return fetch(`${process.env.REACT_APP_SERVER_URL}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(item)
+    }).then((res) => {
+        console.log('res in api', res)
+        return res.json();
     });
 };

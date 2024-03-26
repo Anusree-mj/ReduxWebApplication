@@ -9,7 +9,7 @@ const Header = () => {
     const [userInfo, setUserInfo] = useState<UserItem | null>(null);
 
     useEffect(() => {
-        const userData = sessionStorage.getItem('userData')
+        const userData = localStorage.getItem('userData')
         if (userData) {
             setUserInfo(JSON.parse(userData));
             console.log(userData)
@@ -17,7 +17,7 @@ const Header = () => {
     }, [])
 
     const logoutHandler = () => {
-        sessionStorage.removeItem('userData');
+        localStorage.removeItem('userData');
         setUserInfo(null);
     };
 
