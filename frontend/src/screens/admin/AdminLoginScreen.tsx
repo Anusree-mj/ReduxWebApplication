@@ -1,21 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Form, Button, Row, Col, Container, Spinner } from 'react-bootstrap';
-import Header from "../components/header"
-import { getLoginAction, userStateType } from '../store/user/userReducer';
+import AdminHeader from '../../components/adminHeader';
+import { getAdminLoginAction, adminStateType } from '../../store/admin/adminReducer';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
-
-const LoginScreen = () => {
+const AdminLoginScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('')
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const isLoading = useSelector((state: { user: userStateType }) => state.user.isLoading);
-    const error = useSelector((state: { user: userStateType }) => state.user.error);
+    const isLoading = useSelector((state: { admin: adminStateType }) => state.admin.isLoading);
+    const error = useSelector((state: { admin: adminStateType }) => state.admin.error);
 
-    const handleLogin = async (e: { preventDefault: () => void; }) => {
+    const handleAdminLogin = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         if (!email && !password) {
             toast.error('Please provide valid email and password');
@@ -26,22 +25,22 @@ const LoginScreen = () => {
             toast.error('Please provide valid password');
         }
         try {
-            await dispatch(getLoginAction({ email, password, handleLoginSuccess }));
+            await dispatch(getAdminLoginAction({ email, password, handleAdminLoginSuccess }));
         } catch (error) {
             console.error('Login error:', error);
         }
     }
 
-    const handleLoginSuccess = (userData: any) => {
-        localStorage.setItem("userData", JSON.stringify(userData));
+    const handleAdminLoginSuccess = async (adminData: any) => {
+        localStorage.setItem("adminData", JSON.stringify(adminData));
         toast.success('Successfully logged in');
-        navigate('/profile');         
+       navigate('/admin')
     }
 
     useEffect(() => {
-        const userData = localStorage.getItem("userData");
-        if (userData) {
-            navigate('/');
+        const adminData = localStorage.getItem("adminData");
+        if (adminData) {
+            navigate('/admin');
         }
     }, [navigate]);
 
@@ -53,12 +52,12 @@ const LoginScreen = () => {
 
     return (
         <>
-            <Header />
+            <AdminHeader />
             <Container>
                 <Row className='justify-content-md-center mt-5'>
                     <Col xs={12} md={6} className='card p-5'>
-                        <h1>Sign In</h1>
-                        <Form onSubmit={handleLogin}>
+                        <h1>Admin Sign In</h1>
+                        <Form onSubmit={handleAdminLogin}>
                             <Form.Group className='my-2' controlId='email'>
                                 <Form.Label>Email Address</Form.Label>
                                 <Form.Control
@@ -113,4 +112,4 @@ const LoginScreen = () => {
     );
 };
 
-export default LoginScreen;
+export default AdminLoginScreen;

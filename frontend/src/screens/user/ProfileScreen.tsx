@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import Header from "../components/header"
+import Header from "../../components/header"
 import { useNavigate } from "react-router-dom";
-import { UserItem } from "../store/user/type";
+import { UserItem } from "../../store/user/type";
 const ProfileScreen = () => {
     const [userInfo, setUserInfo] = useState<UserItem | null>()
     const navigate = useNavigate();

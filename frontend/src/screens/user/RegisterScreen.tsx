@@ -1,9 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Form, Button, Row, Col, Container, Spinner } from 'react-bootstrap';
-import Header from '../components/header';
+import Header from '../../components/header';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getSignupAction, userStateType } from '../store/user/userReducer';
+import { getSignupAction, userStateType } from '../../store/user/userReducer';
 import { toast } from 'react-toastify';
 import axios from 'axios'
 
@@ -168,8 +168,7 @@ const RegisterScreen = () => {
 
                             </Form.Group>
 
-                            <Button
-                                // disabled={isLoading}
+                            <Button                             
                                 type='submit'
                                 variant='primary'
                                 className='mt-3'

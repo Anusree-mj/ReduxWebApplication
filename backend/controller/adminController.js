@@ -1,50 +1,47 @@
 import asyncHandler from 'express-async-handler'
 import Admin from '../models/adminModel.js';
+import User from '../models/userModel.js';
 import { generateAdminToken } from '../utilitis/token.js';
 
 // auth user
 const authAdmin = asyncHandler(async (req, res) => {
+    console.log('entered in admin controller')
     const { email, password } = req.body;
-    const admin = await Admin.findOne({ email });
-
-    if (admin && (await admin.matchPassword(password))) {
+    const admin = await Admin.findOne({ email, password });
+    if (admin) {
+        console.log('email found')
         generateAdminToken(res, admin._id);
-
-        res.json({
-            _id: admin._id,
-            name: admin.name,
-            email: admin.email,
+        res.status(200).json({
+            status: 'ok',
+            admin: {
+                _id: admin._id,
+                name: admin.name,
+                email: admin.email,
+            },
         });
+
     } else {
-        res.status(401);
-        throw new Error('Invalid email or password');
+        res.status(401).json({ status: 'nok', message: 'Invalid email or password' });
     }
 });
 
 
-// logout admin
-const logoutAdmin = (req, res) => {
-    res.cookie('jwtAdmin', '', {
-        httpOnly: true,
-        expires: new Date(0),
-    });
-    res.status(200).json({ message: 'Logged out successfully' });
-};
-
-
 // get admin dashboard
 const getAdminDashboard = asyncHandler(async (req, res) => {
+    console.log('entered in controller')
     const admin = await Admin.findById(req.admin._id);
 
     if (admin) {
-        res.json({
-            _id: admin._id,
-            name: admin.name,
-            email: admin.email,
+        const users = await User.find({}, { name: 1, email: 1, image: 1 });
+        console.log('users found in dashboard controller fnctn', users)
+        res.status(200).json({
+            status: 'ok',
+            users: users
         });
+
+
     } else {
-        res.status(404);
-        throw new Error('User not found');
+        res.status(401).json({ status: 'nok', message: 'Admin not found' });
     }
 });
 
@@ -74,6 +71,5 @@ const getAdminDashboard = asyncHandler(async (req, res) => {
 // });
 export {
     authAdmin,
-    logoutAdmin,
     getAdminDashboard,
 }

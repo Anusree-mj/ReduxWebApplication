@@ -3,7 +3,7 @@ import { UserItem } from "../store/user/type";
 
 
 export const getLoginApi = async (item: UserItem) => {
-    const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/auth`, {
+    const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/auth`, {
         method: 'POST',
         body: JSON.stringify(item),
         headers: {
@@ -14,7 +14,7 @@ export const getLoginApi = async (item: UserItem) => {
     return await res.json();
 };
 export const getSignupApi = async (item: UserItem) => {
-    const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/`, {
+    const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/`, {
         method: 'POST',
         body: JSON.stringify(item),
         headers: {
@@ -26,7 +26,7 @@ export const getSignupApi = async (item: UserItem) => {
 };
 
 export const getUploadApi = async (item: UserItem) => {
-    const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/profile`, {
+    const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/profile`, {
         method: 'PUT',
         body: JSON.stringify(item),
         headers: {

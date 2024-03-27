@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Form, Button, Row, Col, Container, Spinner } from 'react-bootstrap';
-import Header from '../components/header';
+import Header from '../../components/header';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { updateProfileAction, userStateType } from '../store/user/userReducer';
+import { updateProfileAction, userStateType } from '../../store/user/userReducer';
 
 const UpdateProfileScreen = () => {
     const [name, setName] = useState('')
@@ -42,7 +42,7 @@ const UpdateProfileScreen = () => {
                 setImage(response.data.imageUrl)
                 toast.success('Image uplaoded successfully')
             } else {
-                toast.error('No file selected');
+                toast.error(error);
             }
         } catch (error) {
             console.log(error);
@@ -116,7 +116,20 @@ const UpdateProfileScreen = () => {
                             </Form.Group>
 
                             <Button type='submit' variant='primary' className='mt-3'>
-                                Update
+                                {isLoading ? (
+                                    <>
+                                        <Spinner
+                                            as="span"
+                                            animation="border"
+                                            size="sm"
+                                            role="status"
+                                            aria-hidden="true"
+                                        />
+                                        <span className="visually-hidden">Loading...</span>
+                                    </>
+                                ) : (
+                                    'Sign Up'
+                                )}
                             </Button>
                         </Form>
                     </Col>
