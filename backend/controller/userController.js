@@ -10,14 +10,14 @@ const authUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
-        generateToken(res, user._id);
+        generateToken(res, user._id)
         res.status(200).json({
             status: 'ok',
             user: {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                image: user.image
+                image: user.image,
             },
         });
     } else {
@@ -50,15 +50,14 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 
     if (user) {
-        generateToken(res, user._id);
-        console.log('userInfo', user)
+        generateToken(res, user._id)
         res.status(201).json({
             status: 'ok',
             user: {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                image: user.image
+                image: user.image,
             }
         })
     } else {
@@ -67,38 +66,13 @@ const registerUser = asyncHandler(async (req, res) => {
 
 })
 
-// logout user
-const logoutUser = (req, res) => {
-    res.cookie('jwt', '', {
-        httpOnly: true,
-        expires: new Date(0),
-    });
-    res.status(200).json({ message: 'Logged out successfully' });
-};
-
-
-// get user
-const getUserProfile = asyncHandler(async (req, res) => {
-    console.log('req in getuserprofile', req)
-    const user = await User.findById(req.user._id);
-    console.log(user, 'user in get userProgile')
-    if (user) {
-        res.json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-        });
-    } else {
-        res.status(404);
-        throw new Error('User not found');
-    }
-});
-
 // update user
 const updateUserProfile = asyncHandler(async (req, res) => {
+    console.log('update entered in userController')
     const user = await User.findById(req.user._id);
 
     if (user) {
+        console.log(user)
         user.name = req.body.name || user.name;
         user.email = req.body.email || user.email;
 
@@ -107,22 +81,26 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         }
 
         const updatedUser = await user.save();
+        res.status(201).json({
+            status: 'ok',
+            user: {
+                _id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                image: updatedUser.image,
+            }
+        })
 
-        res.json({
-            _id: updatedUser._id,
-            name: updatedUser.name,
-            email: updatedUser.email,
-        });
     } else {
         res.status(404);
-        throw new Error('User not found');
     }
 });
+
+
+
 export {
     authUser,
     registerUser,
-    logoutUser,
-    getUserProfile,
     updateUserProfile,
-    uploadImage
+    uploadImage,
 }

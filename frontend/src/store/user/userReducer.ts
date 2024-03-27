@@ -30,7 +30,7 @@ export const userSlice: any = createSlice({
         getLoginSuccessAction: (state, action) => {
             // console.log('action n succes action', action)
             state.isLoading = false;
-            // state.user = action.payload;
+            state.user = action.payload;
         },
         getLoginFailureAction: (state, action) => {
             console.log('action in failure', action)
@@ -49,6 +49,18 @@ export const userSlice: any = createSlice({
             state.isLoading = false;
             state.error = action.payload;
         },
+        updateProfileAction: (state) => {
+            state.isLoading = true;
+        },
+        updateProfileSuccessAction: (state, action) => {
+            state.isLoading = false;
+            state.user = action.payload;
+        },
+        updateProfileFailureAction: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+            console.log('error found', state.error)
+        },
 
     }
 })
@@ -58,6 +70,9 @@ export const {
     getLoginSuccessAction,
     getLoginFailureAction,
     getSignupAction,
-    getSignupSuccessAction, getSignupFailureAction,
-
+    getSignupSuccessAction,
+    getSignupFailureAction,
+    updateProfileAction,
+    updateProfileSuccessAction,
+    updateProfileFailureAction
 } = userSlice.actions;

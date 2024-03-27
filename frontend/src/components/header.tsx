@@ -4,9 +4,13 @@ import { FaSignInAlt } from 'react-icons/fa';
 import { LinkContainer } from 'react-router-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { UserItem } from "../store/user/type";
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import Cookies from 'js-cookie';
 
 const Header = () => {
     const [userInfo, setUserInfo] = useState<UserItem | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const userData = localStorage.getItem('userData')
@@ -16,9 +20,16 @@ const Header = () => {
         }
     }, [])
 
-    const logoutHandler = () => {
-        localStorage.removeItem('userData');
-        setUserInfo(null);
+    const logoutHandler = async () => {
+        try {
+            Cookies.remove('jwt');
+            localStorage.removeItem('userData');
+            setUserInfo(null);
+            navigate('/login');
+        } catch (error) {
+            toast.error('Logout Failed')
+            console.log(error)
+        }
     };
 
     return (

@@ -1,23 +1,27 @@
 import { takeEvery, put, call } from 'redux-saga/effects';
-import { getLoginApi, getSignupApi } from '../../services/users';
+import { getLoginApi, getSignupApi, getUploadApi } from '../../services/users';
 import {
     getLoginAction,
     getLoginFailureAction,
     getLoginSuccessAction,
     getSignupAction,
     getSignupSuccessAction,
-    getSignupFailureAction
+    getSignupFailureAction,
+    updateProfileAction,
+    updateProfileFailureAction,
+    updateProfileSuccessAction
 } from '../../store/user/userReducer'
+import Cookies from 'js-cookie';
 
-
+// loginSaga
 function* getLoginActionSaga(action: {
     type: string;
     payload: { email: '', password: '', handleLoginSuccess: (userData: any) => void }
 }): any {
     try {
         const response = yield call<any>(getLoginApi, action.payload);
-        console.log('response from backend', response)
         if (response.status === 'ok') {
+            // Cookies.set('jwt', response.user.jwt, { expires: 7 });
             action.payload.handleLoginSuccess(response.user)
             yield put(getLoginSuccessAction(response.user))
         } else {
@@ -30,6 +34,7 @@ function* getLoginActionSaga(action: {
     }
 }
 
+//signup saga
 function* getSignupActionSaga(action: {
     type: string;
     payload: { name: '', email: '', password: '', image: '', handleSignupSuccess: (userData: any) => void }
@@ -38,7 +43,7 @@ function* getSignupActionSaga(action: {
         const response = yield call<any>(getSignupApi, action.payload);
         console.log('response from backend', response)
         if (response.status === 'ok') {
-
+            // Cookies.set('jwt', response.user.jwt, { expires: 7 });
             action.payload.handleSignupSuccess(response.user)
             yield put(getSignupSuccessAction(response.user))
         } else {
@@ -51,7 +56,26 @@ function* getSignupActionSaga(action: {
     }
 }
 
+function* updateUserProfileSaga(action: {
+    type: string;
+    payload: { name: '', email: '', image: '', handleUpdateSuccess: (userData: any) => void }
+}): any {
+    try {
+        const response = yield call<any>(getUploadApi, action.payload);
+        if (response.status === 'ok') {
+            action.payload.handleUpdateSuccess(response.user)
+            yield put(updateProfileSuccessAction(response.user))
+        } else {
+            console.log('responsemessage', response.message)
+            yield put(updateProfileFailureAction(response.message))
+
+        }
+    } catch (err) {
+        yield put(updateProfileFailureAction(err))
+    }
+}
 export function* userWatcher() {
     yield takeEvery(getLoginAction, getLoginActionSaga);
-    yield takeEvery(getSignupAction, getSignupActionSaga)
+    yield takeEvery(getSignupAction, getSignupActionSaga);
+    yield takeEvery(updateProfileAction, updateUserProfileSaga);
 }

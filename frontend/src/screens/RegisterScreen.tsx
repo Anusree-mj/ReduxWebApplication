@@ -85,8 +85,9 @@ const RegisterScreen = () => {
             if (file) {
                 const formData = new FormData();
                 formData.append('file', file);
-                const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/upload`, formData);
+                const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/uploadImage`, formData);
                 setImage(response.data.imageUrl)
+                toast.success('Image Uploaded')
             } else {
                 toast.error('No file selected');
             }
@@ -127,7 +128,7 @@ const RegisterScreen = () => {
 
                             </Form.Group>
 
-                            <Form.Group className='my-2' controlId='image' onClick={(e) => { setNameSpan('') }}>
+                            <Form.Group className='my-2' controlId='image'>
                                 <Form.Label>Image </Form.Label>
                                 <div className="d-flex align-items-center">
                                     <Form.Control
