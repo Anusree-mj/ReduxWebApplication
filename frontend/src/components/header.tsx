@@ -16,7 +16,6 @@ const Header = () => {
         const userData = localStorage.getItem('userData')
         if (userData) {
             setUserInfo(JSON.parse(userData));
-            console.log(userData)
         }
     }, [])
 
@@ -46,6 +45,9 @@ const Header = () => {
                                 <NavDropdown title={userInfo.name} id='username'>
                                     <LinkContainer to='/profile'>
                                         <NavDropdown.Item>Profile</NavDropdown.Item>
+                                    </LinkContainer>
+                                    <LinkContainer to='/updateProfile'>
+                                        <NavDropdown.Item>Update Profile</NavDropdown.Item>
                                     </LinkContainer>
                                     <NavDropdown.Item onClick={logoutHandler}>
                                         Logout

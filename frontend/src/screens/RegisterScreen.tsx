@@ -77,7 +77,7 @@ const RegisterScreen = () => {
     const handleSignupSuccess = (userData: any) => {
         localStorage.setItem("userData", JSON.stringify(userData));
         toast.success('Successfully logged in');
-        navigate('/');
+        navigate('/profile');
     }
 
     const uploadImage = async () => {

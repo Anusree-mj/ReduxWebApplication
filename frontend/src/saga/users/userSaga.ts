@@ -25,7 +25,6 @@ function* getLoginActionSaga(action: {
             action.payload.handleLoginSuccess(response.user)
             yield put(getLoginSuccessAction(response.user))
         } else {
-            console.log('responsemessage', response.message)
             yield put(getLoginFailureAction(response.message))
 
         }
@@ -41,13 +40,11 @@ function* getSignupActionSaga(action: {
 }): any {
     try {
         const response = yield call<any>(getSignupApi, action.payload);
-        console.log('response from backend', response)
         if (response.status === 'ok') {
             // Cookies.set('jwt', response.user.jwt, { expires: 7 });
             action.payload.handleSignupSuccess(response.user)
             yield put(getSignupSuccessAction(response.user))
         } else {
-            console.log('responsemessage', response.message)
             yield put(getSignupFailureAction(response.message))
 
         }
@@ -66,7 +63,6 @@ function* updateUserProfileSaga(action: {
             action.payload.handleUpdateSuccess(response.user)
             yield put(updateProfileSuccessAction(response.user))
         } else {
-            console.log('responsemessage', response.message)
             yield put(updateProfileFailureAction(response.message))
 
         }

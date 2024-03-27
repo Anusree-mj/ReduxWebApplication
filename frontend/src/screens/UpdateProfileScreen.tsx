@@ -61,8 +61,7 @@ const UpdateProfileScreen = () => {
 
     const handleUpdateSuccess = (userData: any) => {
         localStorage.setItem("userData", JSON.stringify(userData));
-        toast.success('Successfully logged in');
-        navigate('/');
+        navigate('/profile');
     }
 
     return (

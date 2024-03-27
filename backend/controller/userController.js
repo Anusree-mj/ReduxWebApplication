@@ -4,7 +4,6 @@ import { generateToken } from '../utilitis/token.js';
 
 // auth user
 const authUser = asyncHandler(async (req, res) => {
-    console.log('entered in login backend')
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
@@ -28,10 +27,8 @@ const authUser = asyncHandler(async (req, res) => {
 
 // upload image
 const uploadImage = asyncHandler(async (req, res) => {
-    console.log('req.fileeee', req.file)
     const relativeImagePath = req.file.path.replace(/\\/g, '/').split('/public')[1];
     const imageUrl = `${req.protocol}://${req.get('host')}/public${relativeImagePath}`;
-    console.log('imageurl', imageUrl)
     res.status(200).json({ imageUrl });
 })
 
@@ -68,17 +65,13 @@ const registerUser = asyncHandler(async (req, res) => {
 
 // update user
 const updateUserProfile = asyncHandler(async (req, res) => {
-    console.log('update entered in userController')
     const user = await User.findById(req.user._id);
 
     if (user) {
-        console.log(user)
         user.name = req.body.name || user.name;
         user.email = req.body.email || user.email;
-
-        if (req.body.password) {
-            user.password = req.body.password;
-        }
+        user.image = req.body.image || user.image;
+       
 
         const updatedUser = await user.save();
         res.status(201).json({

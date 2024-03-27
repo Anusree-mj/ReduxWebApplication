@@ -24,16 +24,13 @@ export const userSlice: any = createSlice({
     initialState: initialState,
     reducers: {
         getLoginAction: (state) => {
-            console.log('getloginaction reducer triggered')
             state.isLoading = true;
         },
         getLoginSuccessAction: (state, action) => {
-            // console.log('action n succes action', action)
             state.isLoading = false;
             state.user = action.payload;
         },
         getLoginFailureAction: (state, action) => {
-            console.log('action in failure', action)
             state.isLoading = false;
             state.error = action.payload;
             console.log('eror found', state.error)

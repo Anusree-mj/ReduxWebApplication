@@ -5,7 +5,6 @@ import { generateAdminToken } from '../utilitis/token.js';
 // auth user
 const authAdmin = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    console.log('check in backend', email, password)
     const admin = await Admin.findOne({ email });
 
     if (admin && (await admin.matchPassword(password))) {
