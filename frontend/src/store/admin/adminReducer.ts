@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 import { AdminItem } from "./type";
-import { UsersItem } from "../user/type";
+import { UsersItem } from "../admin/type";
 export interface adminStateType {
     admin: AdminItem;
     users: UsersItem[];
@@ -24,6 +24,7 @@ export const adminSlice: any = createSlice({
     name: "admin",
     initialState: initialState,
     reducers: {
+        // login
         getAdminLoginAction: (state) => {
             state.isLoading = true;
         },
@@ -36,19 +37,21 @@ export const adminSlice: any = createSlice({
             state.error = action.payload;
             console.log('eror found', state.error)
         },
+        // 
+        // user details
         getUsersDetailsAction: (state) => {
             state.isLoading = true;
         },
         getUsersDetailsSuccessAction: (state, action) => {
             state.isLoading = false;
             state.users = action.payload;
-            console.log('state.users have',state.users)
         },
         getUsersDetailsFailureAction: (state, action) => {
             state.isLoading = false;
             state.error = action.payload;
             console.log('eror found', state.error)
         },
+        // 
 
     }
 })
@@ -59,5 +62,5 @@ export const {
     getAdminLoginFailureAction,
     getUsersDetailsAction,
     getUsersDetailsFailureAction,
-    getUsersDetailsSuccessAction
+    getUsersDetailsSuccessAction,   
 } = adminSlice.actions;

@@ -8,7 +8,7 @@ const authUser = asyncHandler(async (req, res) => {
 
     const user = await User.findOne({ email });
 
-    if (user && (await user.matchPassword(password))) {
+    if (user && (await user.matchPassword(password)) && !user.isBlocked) {
         generateToken(res, user._id)
         res.status(200).json({
             status: 'ok',
@@ -19,6 +19,8 @@ const authUser = asyncHandler(async (req, res) => {
                 image: user.image,
             },
         });
+    } else if (user.isBlocked) {
+        res.status(401).json({ status: 'nok', message: 'User is blocked' });
     } else {
         res.status(401).json({ status: 'nok', message: 'Invalid email or password' });
     }
@@ -71,7 +73,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         user.name = req.body.name || user.name;
         user.email = req.body.email || user.email;
         user.image = req.body.image || user.image;
-       
+
 
         const updatedUser = await user.save();
         res.status(201).json({

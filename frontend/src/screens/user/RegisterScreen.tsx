@@ -85,9 +85,9 @@ const RegisterScreen = () => {
             if (file) {
                 const formData = new FormData();
                 formData.append('file', file);
-                const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/uploadImage`, formData);
+                const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/users/uploadImage`, formData);
                 setImage(response.data.imageUrl)
-                toast.success('Image Uploaded')
+                toast.success('Image Successfully Uploaded')
             } else {
                 toast.error('No file selected');
             }

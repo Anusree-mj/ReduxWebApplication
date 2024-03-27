@@ -9,7 +9,7 @@ import {
     getAdminLoginFailureAction,
     getUsersDetailsAction,
     getUsersDetailsFailureAction,
-    getUsersDetailsSuccessAction
+    getUsersDetailsSuccessAction,
 } from '../../store/admin/adminReducer';
 
 // loginSaga
@@ -31,11 +31,11 @@ function* getAdminLoginActionSaga(action: {
     }
 }
 
+// get users details
 function* getUsersDetailsActionSaga(): any {
     try {
         const response = yield call<any>(getUsersDetailsApi);
         if (response.status === 'ok') {
-            console.log('response in userDetailSaga', response.users)
             yield put(getUsersDetailsSuccessAction(response.users))
         } else {
             yield put(getUsersDetailsFailureAction(response.message))
@@ -50,5 +50,4 @@ function* getUsersDetailsActionSaga(): any {
 export function* adminWatcher() {
     yield takeEvery(getAdminLoginAction, getAdminLoginActionSaga);
     yield takeEvery(getUsersDetailsAction, getUsersDetailsActionSaga);
-
 }

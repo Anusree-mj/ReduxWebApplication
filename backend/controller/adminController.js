@@ -5,11 +5,9 @@ import { generateAdminToken } from '../utilitis/token.js';
 
 // auth user
 const authAdmin = asyncHandler(async (req, res) => {
-    console.log('entered in admin controller')
     const { email, password } = req.body;
     const admin = await Admin.findOne({ email, password });
     if (admin) {
-        console.log('email found')
         generateAdminToken(res, admin._id);
         res.status(200).json({
             status: 'ok',
@@ -28,12 +26,10 @@ const authAdmin = asyncHandler(async (req, res) => {
 
 // get admin dashboard
 const getAdminDashboard = asyncHandler(async (req, res) => {
-    console.log('entered in controller')
     const admin = await Admin.findById(req.admin._id);
 
     if (admin) {
-        const users = await User.find({}, { name: 1, email: 1, image: 1 });
-        console.log('users found in dashboard controller fnctn', users)
+        const users = await User.find({});
         res.status(200).json({
             status: 'ok',
             users: users
@@ -45,31 +41,48 @@ const getAdminDashboard = asyncHandler(async (req, res) => {
     }
 });
 
-// update user
-// const updateUserProfile = asyncHandler(async (req, res) => {
-//     const user = await User.findById(req.body._id);
+// delete user
+const deleteUser = asyncHandler(async (req, res) => {
+    const admin = await Admin.findById(req.admin._id);
+    if (admin) {
+        const userId = req.params.userId;
+        const user = await User.findByIdAndUpdate(userId, { isBlocked: true });
+        if (user) {
+            res.status(200).json({
+                status: 'ok',
+                message: 'User blocked succesfully'
+            });
+        } else {
+            console.log('User not found')
+        }
 
-//     if (user) {
-//         user.name = req.body.name || user.name;
-//         user.email = req.body.email || user.email;
+    } else {
+        res.status(401).json({ status: 'nok', message: 'Admin not found' });
+    }
+});
 
-//         if (req.body.password) {
-//             user.password = req.body.password;
-//         }
+// edit user
+const editUser = asyncHandler(async (req, res) => {
+    const admin = await Admin.findById(req.admin._id);
+    if (admin) {
+        const userId = req.params.userId;
+        const user = await User.findByIdAndUpdate(userId, { isBlocked: false });
+        if (user) {
+            res.status(200).json({
+                status: 'ok',
+                message: 'User Unblocked succesfully'
+            });
+        } else {
+            console.log('User not found')
+        }
 
-//         const updatedUser = await user.save();
-
-//         res.json({
-//             _id: updatedUser._id,
-//             name: updatedUser.name,
-//             email: updatedUser.email,
-//         });
-//     } else {
-//         res.status(404);
-//         throw new Error('User not found');
-//     }
-// });
+    } else {
+        res.status(401).json({ status: 'nok', message: 'Admin not found' });
+    }
+});
 export {
     authAdmin,
     getAdminDashboard,
+    deleteUser,
+    editUser
 }
