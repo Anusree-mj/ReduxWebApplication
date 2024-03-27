@@ -23,21 +23,22 @@ export const userSlice: any = createSlice({
     name: "user",
     initialState: initialState,
     reducers: {
+        // login action
         getLoginAction: (state) => {
-            console.log('getloginaction reducer triggered')
             state.isLoading = true;
         },
         getLoginSuccessAction: (state, action) => {
-            // console.log('action n succes action', action)
             state.isLoading = false;
-            // state.user = action.payload;
+            state.user = action.payload;
         },
         getLoginFailureAction: (state, action) => {
-            console.log('action in failure', action)
             state.isLoading = false;
             state.error = action.payload;
             console.log('eror found', state.error)
         },
+        // 
+
+        // signup actin
         getSignupAction: (state) => {
             state.isLoading = true;
         },
@@ -49,6 +50,35 @@ export const userSlice: any = createSlice({
             state.isLoading = false;
             state.error = action.payload;
         },
+        // 
+
+        // get user actin
+      getUserProfileAction: (state) => {
+            state.isLoading = true;
+        },
+      getUserProfileSuccessAction: (state, action) => {
+            state.isLoading = false;
+            state.user = action.payload;
+        },
+      getUserProfileFailureAction: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+        },
+        // 
+
+        // update user
+        updateProfileAction: (state) => {
+            state.isLoading = true;
+        },
+        updateProfileSuccessAction: (state, action) => {
+            state.isLoading = false;
+            state.user = action.payload;
+        },
+        updateProfileFailureAction: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+            console.log('error found', state.error)
+        },
 
     }
 })
@@ -58,6 +88,12 @@ export const {
     getLoginSuccessAction,
     getLoginFailureAction,
     getSignupAction,
-    getSignupSuccessAction, getSignupFailureAction,
-
+    getSignupSuccessAction,
+    getSignupFailureAction,
+    getUserProfileAction,
+    getUserProfileSuccessAction,
+    getUserProfileFailureAction,
+    updateProfileAction,
+    updateProfileSuccessAction,
+    updateProfileFailureAction
 } = userSlice.actions;

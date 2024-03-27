@@ -1,36 +1,27 @@
 import asyncHandler from 'express-async-handler'
 import Admin from '../models/adminModel.js';
+import User from '../models/userModel.js';
 import { generateAdminToken } from '../utilitis/token.js';
 
 // auth user
 const authAdmin = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    console.log('check in backend', email, password)
-    const admin = await Admin.findOne({ email });
-
-    if (admin && (await admin.matchPassword(password))) {
+    const admin = await Admin.findOne({ email, password });
+    if (admin) {
         generateAdminToken(res, admin._id);
-
-        res.json({
-            _id: admin._id,
-            name: admin.name,
-            email: admin.email,
+        res.status(200).json({
+            status: 'ok',
+            admin: {
+                _id: admin._id,
+                name: admin.name,
+                email: admin.email,
+            },
         });
+
     } else {
-        res.status(401);
-        throw new Error('Invalid email or password');
+        res.status(401).json({ status: 'nok', message: 'Invalid email or password' });
     }
 });
-
-
-// logout admin
-const logoutAdmin = (req, res) => {
-    res.cookie('jwtAdmin', '', {
-        httpOnly: true,
-        expires: new Date(0),
-    });
-    res.status(200).json({ message: 'Logged out successfully' });
-};
 
 
 // get admin dashboard
@@ -38,43 +29,92 @@ const getAdminDashboard = asyncHandler(async (req, res) => {
     const admin = await Admin.findById(req.admin._id);
 
     if (admin) {
-        res.json({
-            _id: admin._id,
-            name: admin.name,
-            email: admin.email,
+        const users = await User.find({});
+        res.status(200).json({
+            status: 'ok',
+            users: users
         });
+
+
     } else {
-        res.status(404);
-        throw new Error('User not found');
+        res.status(401).json({ status: 'nok', message: 'Admin not found' });
     }
 });
 
-// update user
-// const updateUserProfile = asyncHandler(async (req, res) => {
-//     const user = await User.findById(req.body._id);
+// delete user
+const deleteUser = asyncHandler(async (req, res) => {
+    const admin = await Admin.findById(req.admin._id);
+    if (admin) {
+        const userId = req.params.userId;
+        const user = await User.findByIdAndUpdate(userId, { isBlocked: true });
+        if (user) {
+            res.status(200).json({
+                status: 'ok',
+                message: 'User blocked succesfully'
+            });
+        } else {
+            console.log('User not found')
+        }
 
-//     if (user) {
-//         user.name = req.body.name || user.name;
-//         user.email = req.body.email || user.email;
+    } else {
+        res.status(401).json({ status: 'nok', message: 'Admin not found' });
+    }
+});
 
-//         if (req.body.password) {
-//             user.password = req.body.password;
-//         }
+// edit user
+const editUser = asyncHandler(async (req, res) => {
+    const admin = await Admin.findById(req.admin._id);
+    if (admin) {
+        const userId = req.params.userId;
+        const user = await User.findByIdAndUpdate(userId, { isBlocked: false });
+        if (user) {
+            res.status(200).json({
+                status: 'ok',
+                message: 'User Unblocked succesfully'
+            });
+        } else {
+            console.log('User not found')
+        }
 
-//         const updatedUser = await user.save();
+    } else {
+        res.status(401).json({ status: 'nok', message: 'Admin not found' });
+    }
+});
 
-//         res.json({
-//             _id: updatedUser._id,
-//             name: updatedUser.name,
-//             email: updatedUser.email,
-//         });
-//     } else {
-//         res.status(404);
-//         throw new Error('User not found');
-//     }
-// });
+// add user
+const addUser = asyncHandler(async (req, res) => {
+    const admin = await Admin.findById(req.admin._id);
+    console.log('entered in adduser controller')
+    if (admin) {
+        const { name, email, password, image } = req.body
+        const userExists = await User.findOne({ email })
+        if (userExists) {
+            res.status(401).json({ status: 'nok', message: 'User already exists' });
+        }
+        const user = await User.create({
+            name,
+            email,
+            password,
+            image
+        });
+
+        if (user) {
+            res.status(201).json({
+                status: 'ok',
+            })
+        } else {
+            res.status(400).json({ status: 'nok', message: 'Error Occured' });
+        }
+    } else {
+        res.status(401).json({ status: 'nok', message: 'Admin not found' });
+    }
+})
+
+
 export {
     authAdmin,
-    logoutAdmin,
     getAdminDashboard,
+    deleteUser,
+    editUser,
+    addUser
 }

@@ -4,22 +4,24 @@ import { generateToken } from '../utilitis/token.js';
 
 // auth user
 const authUser = asyncHandler(async (req, res) => {
-    console.log('entered in login backend')
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
 
-    if (user && (await user.matchPassword(password))) {
-        generateToken(res, user._id);
+    if (user && (await user.matchPassword(password)) && !user.isBlocked) {
+        generateToken(res, user._id)
         res.status(200).json({
             status: 'ok',
             user: {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                image: user.image
+                image: user.image,
+                isBlocked: user.isBlocked
             },
         });
+    } else if (user.isBlocked) {
+        res.status(401).json({ status: 'nok', message: 'User is blocked' });
     } else {
         res.status(401).json({ status: 'nok', message: 'Invalid email or password' });
     }
@@ -28,10 +30,8 @@ const authUser = asyncHandler(async (req, res) => {
 
 // upload image
 const uploadImage = asyncHandler(async (req, res) => {
-    console.log('req.fileeee', req.file)
     const relativeImagePath = req.file.path.replace(/\\/g, '/').split('/public')[1];
     const imageUrl = `${req.protocol}://${req.get('host')}/public${relativeImagePath}`;
-    console.log('imageurl', imageUrl)
     res.status(200).json({ imageUrl });
 })
 
@@ -50,15 +50,15 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 
     if (user) {
-        generateToken(res, user._id);
-        console.log('userInfo', user)
+        generateToken(res, user._id)
         res.status(201).json({
             status: 'ok',
             user: {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                image: user.image
+                image: user.image,
+                isBlocked: user.isBlocked
             }
         })
     } else {
@@ -66,31 +66,25 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
 })
-
-// logout user
-const logoutUser = (req, res) => {
-    res.cookie('jwt', '', {
-        httpOnly: true,
-        expires: new Date(0),
-    });
-    res.status(200).json({ message: 'Logged out successfully' });
-};
-
-
-// get user
-const getUserProfile = asyncHandler(async (req, res) => {
-    console.log('req in getuserprofile', req)
+// get user 
+const getUser = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
-    console.log(user, 'user in get userProgile')
-    if (user) {
-        res.json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-        });
+
+    if (user && !user.isBlocked) {
+        res.status(201).json({
+            status: 'ok'
+        })
+
     } else {
-        res.status(404);
-        throw new Error('User not found');
+        res.status(400).json({
+            status: 'nok', message: 'User is blocked by the admin', user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                image: user.image,
+                isBlocked: user.isBlocked
+            }
+        });
     }
 });
 
@@ -101,28 +95,31 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     if (user) {
         user.name = req.body.name || user.name;
         user.email = req.body.email || user.email;
+        user.image = req.body.image || user.image;
 
-        if (req.body.password) {
-            user.password = req.body.password;
-        }
 
         const updatedUser = await user.save();
+        res.status(201).json({
+            status: 'ok',
+            user: {
+                _id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                image: updatedUser.image,
+            }
+        })
 
-        res.json({
-            _id: updatedUser._id,
-            name: updatedUser.name,
-            email: updatedUser.email,
-        });
     } else {
-        res.status(404);
-        throw new Error('User not found');
+        res.status(400).json({ status: 'nok', message: 'Error Occured' });
     }
 });
+
+
+
 export {
     authUser,
     registerUser,
-    logoutUser,
-    getUserProfile,
     updateUserProfile,
-    uploadImage
+    uploadImage,
+    getUser
 }

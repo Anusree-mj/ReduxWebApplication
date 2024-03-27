@@ -3,28 +3,28 @@ import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { FaSignInAlt } from 'react-icons/fa';
 import { LinkContainer } from 'react-router-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { UserItem } from "../store/user/type";
+import { AdminItem } from "../store/admin/type";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
 
-const Header = () => {
-    const [userInfo, setUserInfo] = useState<UserItem | null>(null);
+const AdminHeader = () => {
+    const [adminInfo, setAdminInfo] = useState<AdminItem | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const userData = localStorage.getItem('userData')
-        if (userData) {
-            setUserInfo(JSON.parse(userData));
+        const adminData = localStorage.getItem('adminData')
+        if (adminData) {
+            setAdminInfo(JSON.parse(adminData));
         }
     }, [])
 
     const logoutHandler = async () => {
         try {
-            Cookies.remove('jwt');
-            localStorage.removeItem('userData');
-            setUserInfo(null);
-            navigate('/login');
+            Cookies.remove('jwtAdmin');
+            localStorage.removeItem('adminData');
+            setAdminInfo(null);
+            navigate('/admin/login');
         } catch (error) {
             toast.error('Logout Failed')
             console.log(error)
@@ -35,20 +35,14 @@ const Header = () => {
         <header>
             <Navbar bg='dark' variant='dark' expand='lg' collapseOnSelect>
                 <Container>
-                    <LinkContainer to='/'>
+                    <LinkContainer to='/admin'>
                         <Navbar.Brand>Redux WebApp</Navbar.Brand>
                     </LinkContainer>
                     <Navbar.Toggle aria-controls='basic-navbar-nav' />
                     <Navbar.Collapse id='basic-navbar-nav'>
                         <Nav className='ms-auto'>
-                            {userInfo ? (
-                                <NavDropdown title={userInfo.name} id='username'>
-                                    <LinkContainer to='/profile'>
-                                        <NavDropdown.Item>Profile</NavDropdown.Item>
-                                    </LinkContainer>
-                                    <LinkContainer to='/updateProfile'>
-                                        <NavDropdown.Item>Update Profile</NavDropdown.Item>
-                                    </LinkContainer>
+                            {adminInfo ? (
+                                <NavDropdown title={adminInfo.name} id='adminname'>
                                     <NavDropdown.Item onClick={logoutHandler}>
                                         Logout
                                     </NavDropdown.Item>
@@ -59,12 +53,7 @@ const Header = () => {
                                         <Nav.Link>
                                             <FaSignInAlt /> Sign In
                                         </Nav.Link>
-                                    </LinkContainer>
-                                    <LinkContainer to='/register'>
-                                        <Nav.Link>
-                                            <FaSignInAlt /> Sign up
-                                        </Nav.Link>
-                                    </LinkContainer>
+                                    </LinkContainer>                                  
                                 </>
                             )}
                         </Nav>
@@ -75,4 +64,4 @@ const Header = () => {
     );
 };
 
-export default Header;
+export default AdminHeader;
