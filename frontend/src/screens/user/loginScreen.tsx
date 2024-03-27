@@ -34,15 +34,12 @@ const LoginScreen = () => {
 
     const handleLoginSuccess = (userData: any) => {
         localStorage.setItem("userData", JSON.stringify(userData));
-        toast.success('Successfully logged in');
         navigate('/profile');         
     }
 
     useEffect(() => {
-        const userData = localStorage.getItem("userData");
-        if (userData) {
-            navigate('/');
-        }
+        const userData = localStorage.getItem("userData");     
+            navigate('/profile');       
     }, [navigate]);
 
     useEffect(() => {

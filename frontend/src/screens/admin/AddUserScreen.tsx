@@ -1,13 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Form, Button, Row, Col, Container, Spinner } from 'react-bootstrap';
-import Header from '../../components/header';
+import AdminHeader from "../../components/adminHeader"
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getSignupAction, userStateType } from '../../store/user/userReducer';
+import { adduserAction, adminStateType } from '../../store/admin/adminReducer';
 import { toast } from 'react-toastify';
 import axios from 'axios'
 
-const RegisterScreen = () => {
+const AddUserScreen = () => {
     const [name, setName] = useState('');
     const [nameSpan, setNameSpan] = useState('');
     const [email, setEmail] = useState('');
@@ -20,27 +20,25 @@ const RegisterScreen = () => {
     const [image, setImage] = useState('')
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const isLoading = useSelector((state: { user: userStateType }) => state.user.isLoading);
-    const error = useSelector((state: { user: userStateType }) => state.user.error);
+    const isLoading = useSelector((state: { admin: adminStateType }) => state.admin.isLoading);
+    const error = useSelector((state: { admin: adminStateType }) => state.admin.error);
 
-    const handleSingup = async (e: { preventDefault: () => void; }) => {
+    const handleAddUser = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         const isValid = validation();
         if (isValid) {
             try {
-                await dispatch(getSignupAction({ name, email, password, image, handleSignupSuccess }));
+                await dispatch(adduserAction({ name, email, password, image,handleAddUserSuccess }));
             } catch (error) {
                 console.error('Login error:', error);
             }
         }
     }
-
-    useEffect(() => {
-        const userData = localStorage.getItem("userData");
-        if (userData) {
-            navigate('/profile');
+    const handleAddUserSuccess = (status: '') => {
+        if (status) {
+            navigate('/admin')
         }
-    }, [navigate]);
+    }
 
     useEffect(() => {
         if (error) {
@@ -73,12 +71,6 @@ const RegisterScreen = () => {
         return isValid;
     };
 
-
-    const handleSignupSuccess = (userData: any) => {
-        localStorage.setItem("userData", JSON.stringify(userData));
-        navigate('/profile');
-    }
-
     const uploadImage = async () => {
         try {
             if (file) {
@@ -98,12 +90,12 @@ const RegisterScreen = () => {
 
     return (
         <>
-            <Header />
+            <AdminHeader />
             <Container>
                 <Row className='justify-content-md-center mt-3 mb-2'>
                     <Col xs={12} md={6} className='card p-5'>
-                        <h1>Sign Up</h1>
-                        <Form onSubmit={handleSingup}>
+                        <h1>Add User</h1>
+                        <Form onSubmit={handleAddUser}>
                             <Form.Group className='my-2' controlId='name' onClick={(e) => { setNameSpan('') }}>
                                 <Form.Label>Name </Form.Label>
                                 <Form.Control
@@ -167,7 +159,7 @@ const RegisterScreen = () => {
 
                             </Form.Group>
 
-                            <Button                             
+                            <Button
                                 type='submit'
                                 variant='primary'
                                 className='mt-3'
@@ -184,15 +176,10 @@ const RegisterScreen = () => {
                                         <span className="visually-hidden">Loading...</span>
                                     </>
                                 ) : (
-                                    'Sign Up'
+                                    'Add User'
                                 )}
                             </Button>
                         </Form>
-                        <Row className='py-3'>
-                            <Col>
-                                Already have an account? <Link to='/login'>Sign In</Link>
-                            </Col>
-                        </Row>
                     </Col>
                 </Row>
             </Container >
@@ -200,4 +187,4 @@ const RegisterScreen = () => {
     );
 };
 
-export default RegisterScreen;
+export default AddUserScreen;

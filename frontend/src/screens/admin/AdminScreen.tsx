@@ -8,10 +8,12 @@ import {
 import { MDBDataTable } from 'mdbreact';
 import { deleteUser } from "../../utilities/deleteUser";
 import { editUser } from "../../utilities/editUser";
+import { useNavigate } from "react-router-dom";
 
 const AdminScreen = () => {
   const dispatch = useDispatch();
   const users = useSelector((state: { admin: adminStateType }) => state.admin.users);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,7 +29,8 @@ const AdminScreen = () => {
 
   const handleEdit = (userId: string, userName: string) => {
     editUser(userId, userName);
-  }; 
+  };
+
   const columns = [
     {
       label: 'Image',
@@ -96,14 +99,14 @@ const AdminScreen = () => {
     ),
     edit: (
       <>
-        <button className="btn btn-info" disabled={!user.isBlocked} onClick={() => handleEdit(user._id, user.name)}>
+        <button className="btn btn-success" disabled={!user.isBlocked} onClick={() => handleEdit(user._id, user.name)}>
           <img src="/edit.png" alt="" style={{ marginLeft: '5px', verticalAlign: 'middle' }} />
         </button>
       </>
     ),
     delete: (
       <>
-        <button className="btn btn-danger" disabled={user.isBlocked} onClick={()=>handleDelete(user._id,user.name)}>
+        <button className="btn btn-danger" disabled={user.isBlocked} onClick={() => handleDelete(user._id, user.name)}>
           <img src="/dlt.png" alt="" style={{ marginLeft: '5px', verticalAlign: 'middle' }} />
         </button>
       </>
@@ -115,6 +118,11 @@ const AdminScreen = () => {
     <>
       <AdminHeader />
       <div className="container mt-5">
+        <div className="row">
+          <div className=" offset-md-10 text-md-right">
+            <button className="btn btn-warning mb-3  fw-bold" onClick={()=>navigate('/admin/addUser')}>Add User</button> 
+          </div>
+        </div>
         <MDBDataTable
           responsive
           bordered

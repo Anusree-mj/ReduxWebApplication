@@ -80,9 +80,41 @@ const editUser = asyncHandler(async (req, res) => {
         res.status(401).json({ status: 'nok', message: 'Admin not found' });
     }
 });
+
+// add user
+const addUser = asyncHandler(async (req, res) => {
+    const admin = await Admin.findById(req.admin._id);
+    console.log('entered in adduser controller')
+    if (admin) {
+        const { name, email, password, image } = req.body
+        const userExists = await User.findOne({ email })
+        if (userExists) {
+            res.status(401).json({ status: 'nok', message: 'User already exists' });
+        }
+        const user = await User.create({
+            name,
+            email,
+            password,
+            image
+        });
+
+        if (user) {
+            res.status(201).json({
+                status: 'ok',
+            })
+        } else {
+            res.status(400).json({ status: 'nok', message: 'Error Occured' });
+        }
+    } else {
+        res.status(401).json({ status: 'nok', message: 'Admin not found' });
+    }
+})
+
+
 export {
     authAdmin,
     getAdminDashboard,
     deleteUser,
-    editUser
+    editUser,
+    addUser
 }

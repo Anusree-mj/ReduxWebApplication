@@ -17,6 +17,7 @@ const authUser = asyncHandler(async (req, res) => {
                 name: user.name,
                 email: user.email,
                 image: user.image,
+                isBlocked: user.isBlocked
             },
         });
     } else if (user.isBlocked) {
@@ -57,6 +58,7 @@ const registerUser = asyncHandler(async (req, res) => {
                 name: user.name,
                 email: user.email,
                 image: user.image,
+                isBlocked: user.isBlocked
             }
         })
     } else {
@@ -64,6 +66,27 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
 })
+// get user 
+const getUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+
+    if (user && !user.isBlocked) {
+        res.status(201).json({
+            status: 'ok'
+        })
+
+    } else {
+        res.status(400).json({
+            status: 'nok', message: 'User is blocked by the admin', user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                image: user.image,
+                isBlocked: user.isBlocked
+            }
+        });
+    }
+});
 
 // update user
 const updateUserProfile = asyncHandler(async (req, res) => {
@@ -87,7 +110,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         })
 
     } else {
-        res.status(404);
+        res.status(400).json({ status: 'nok', message: 'Error Occured' });
     }
 });
 
@@ -98,4 +121,5 @@ export {
     registerUser,
     updateUserProfile,
     uploadImage,
+    getUser
 }

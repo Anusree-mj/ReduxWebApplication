@@ -1,5 +1,5 @@
 import { takeEvery, put, call } from 'redux-saga/effects';
-import { getLoginApi, getSignupApi, getUploadApi } from '../../services/users';
+import { getLoginApi, getSignupApi, getUploadApi, getUserProfileApi } from '../../services/users';
 import {
     getLoginAction,
     getLoginFailureAction,
@@ -9,7 +9,10 @@ import {
     getSignupFailureAction,
     updateProfileAction,
     updateProfileFailureAction,
-    updateProfileSuccessAction
+    updateProfileSuccessAction,
+    getUserProfileAction,
+    getUserProfileFailureAction,
+    getUserProfileSuccessAction
 } from '../../store/user/userReducer'
 import Cookies from 'js-cookie';
 
@@ -53,6 +56,26 @@ function* getSignupActionSaga(action: {
     }
 }
 
+//get user saga
+function* getUserProfileActionSaga(action: {
+    type: string;
+    payload: { handleSignupSuccess: (status: '') => void }
+}): any {
+    try {
+        const response = yield call<any>(getUserProfileApi);
+        if (response.status === 'ok') {
+            action.payload.handleSignupSuccess(response.user)
+            yield put(getSignupSuccessAction(response.user))
+        } else {
+            yield put(getSignupFailureAction(response.message))
+
+        }
+    } catch (err) {
+        yield put(getSignupFailureAction(err))
+    }
+}
+
+// update saga
 function* updateUserProfileSaga(action: {
     type: string;
     payload: { name: '', email: '', image: '', handleUpdateSuccess: (userData: any) => void }
@@ -73,5 +96,6 @@ function* updateUserProfileSaga(action: {
 export function* userWatcher() {
     yield takeEvery(getLoginAction, getLoginActionSaga);
     yield takeEvery(getSignupAction, getSignupActionSaga);
+    yield takeEvery(getUserProfileAction, getUserProfileActionSaga);
     yield takeEvery(updateProfileAction, updateUserProfileSaga);
 }

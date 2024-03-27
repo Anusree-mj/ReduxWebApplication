@@ -31,9 +31,8 @@ const AdminLoginScreen = () => {
         }
     }
 
-    const handleAdminLoginSuccess = async (adminData: any) => {
+    const handleAdminLoginSuccess = async (adminData: adminStateType) => {
         localStorage.setItem("adminData", JSON.stringify(adminData));
-        toast.success('Successfully logged in');
        navigate('/admin')
     }
 
@@ -99,12 +98,7 @@ const AdminLoginScreen = () => {
                                 )}
                             </Button>
 
-                        </Form>
-                        <Row className='py-3'>
-                            <Col>
-                                New Customer? <Link to='/register'>Register</Link>
-                            </Col>
-                        </Row>
+                        </Form>                      
                     </Col>
                 </Row>
             </Container >

@@ -52,7 +52,18 @@ export const adminSlice: any = createSlice({
             console.log('eror found', state.error)
         },
         // 
-
+        // Add User
+        adduserAction: (state) => {
+            state.isLoading = true;
+        },
+        adduserSuccessAction: (state) => {
+            state.isLoading = false;
+        },
+        adduserFailureAction: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+            console.log('eror found', state.error)
+        },
     }
 })
 
@@ -62,5 +73,8 @@ export const {
     getAdminLoginFailureAction,
     getUsersDetailsAction,
     getUsersDetailsFailureAction,
-    getUsersDetailsSuccessAction,   
+    getUsersDetailsSuccessAction,
+    adduserAction,
+    adduserSuccessAction, 
+    adduserFailureAction
 } = adminSlice.actions;

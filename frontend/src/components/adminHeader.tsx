@@ -35,7 +35,7 @@ const AdminHeader = () => {
         <header>
             <Navbar bg='dark' variant='dark' expand='lg' collapseOnSelect>
                 <Container>
-                    <LinkContainer to='/'>
+                    <LinkContainer to='/admin'>
                         <Navbar.Brand>Redux WebApp</Navbar.Brand>
                     </LinkContainer>
                     <Navbar.Toggle aria-controls='basic-navbar-nav' />

@@ -4,13 +4,14 @@ import {
     authAdmin,
     getAdminDashboard,
     deleteUser,
-    editUser
+    editUser,addUser
 } from '../controller/adminController.js'
 import { protectAdmin } from '../middleware/adminAuthMiddleware.js';
 
 
 router.post('/login', authAdmin);//login admin
 router.get('/', protectAdmin, getAdminDashboard);
+router.post('/addUser', protectAdmin, addUser);
 router
     .route('/user/:userId')
     .delete(protectAdmin, deleteUser)

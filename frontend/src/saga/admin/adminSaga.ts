@@ -2,6 +2,7 @@ import { takeEvery, put, call } from 'redux-saga/effects';
 import {
     getAdminLoginApi,
     getUsersDetailsApi,
+    addUserApi
 } from '../../services/admin';
 import {
     getAdminLoginAction,
@@ -10,12 +11,16 @@ import {
     getUsersDetailsAction,
     getUsersDetailsFailureAction,
     getUsersDetailsSuccessAction,
+    adduserAction,
+    adduserSuccessAction,
+    adduserFailureAction,
+    adminStateType
 } from '../../store/admin/adminReducer';
 
 // loginSaga
 function* getAdminLoginActionSaga(action: {
     type: string;
-    payload: { email: '', password: '', handleAdminLoginSuccess: (adminData: any) => void }
+    payload: { email: '', password: '', handleAdminLoginSuccess: (adminData: adminStateType) => void }
 }): any {
     try {
         const response = yield call<any>(getAdminLoginApi, action.payload);
@@ -46,8 +51,28 @@ function* getUsersDetailsActionSaga(): any {
     }
 }
 
+// add user
+function* addUsersActionSaga(action: {
+    type: string;
+    payload: { name: '', email: '', password: '', image: '', handleAddUserSuccess: (string: any) => void }
+}): any {
+    try {
+        const response = yield call<any>(addUserApi, action.payload);
+        if (response.status === 'ok') {
+            action.payload.handleAddUserSuccess(response.status)
+            yield put(adduserSuccessAction())
+        } else {
+            yield put(adduserFailureAction(response.message))
+
+        }
+    } catch (err) {
+        yield put(getUsersDetailsFailureAction(err))
+    }
+}
+
 
 export function* adminWatcher() {
     yield takeEvery(getAdminLoginAction, getAdminLoginActionSaga);
     yield takeEvery(getUsersDetailsAction, getUsersDetailsActionSaga);
+    yield takeEvery(adduserAction, addUsersActionSaga);
 }
